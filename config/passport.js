@@ -51,3 +51,37 @@ passport.use(
     }
   )
 );
+
+passport.use(
+  "local.signin",
+  new LocalStrategy(
+    {
+      usernameField: "name",
+      passwordField: "password",
+      passReqToCallback: true,
+    },
+    (req, name, password, done) => {
+      req.checkBody("name", "invalid name").notEmpty();
+      req.checkBody("password", "minimum 4 characters required").notEmpty();
+
+      const errors = req.validationErrors();
+      if (errors) {
+        const messages = [];
+        errors.forEach((error) => messages.push(error.msg));
+        return done(null, false, req.flash("error", messages));
+      }
+      User.findOne({ name: name }, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false, { message: "No user found" });
+        }
+        if (!user.validPassword(password)) {
+          return done(null, false, { message: "Wrong password " });
+        }
+        return done(null, user);
+      });
+    }
+  )
+);

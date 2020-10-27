@@ -58,4 +58,22 @@ router.post(
   }
 );
 
+router.get("/signin", (req, res, next) => {
+  res.render("signin", {
+    layout: "main",
+    csrfToken: req.csrfToken(),
+    // messages: messages,
+    // hasErrors: messages.length > 0,
+  });
+});
+
+router.post(
+  "/signin",
+  passport.authenticate("local.signin", {
+    successRedirect: "/page",
+    failureRedirect: "/signin",
+    failureFlash: true,
+  })
+);
+
 module.exports = router;
