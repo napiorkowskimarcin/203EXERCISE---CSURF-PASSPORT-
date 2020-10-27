@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
   }
 });
 
-router.get("/page", (req, res) => {
+router.get("/page", isLoggedIn, (req, res) => {
   try {
     res.render("page", {
       layout: "main",
@@ -32,7 +32,7 @@ router.get("/page", (req, res) => {
   }
 });
 
-router.get("/profile", (req, res) => {
+router.get("/profile", isLoggedIn, (req, res) => {
   try {
     res.render("profile", {
       layout: "main",
@@ -77,3 +77,10 @@ router.post(
 );
 
 module.exports = router;
+
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/");
+}
