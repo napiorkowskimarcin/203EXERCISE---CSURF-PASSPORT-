@@ -4,7 +4,7 @@ const exphbs = require("express-handlebars");
 const morgan = require("morgan");
 const config = require("./config/config");
 const bodyParser = require("body-parser");
-
+const validator = require("express-validator");
 //passport:
 const passport = require("passport");
 const flash = require("connect-flash");
@@ -33,8 +33,6 @@ mongoose.connect(config.db, {
   useUnifiedTopology: true,
   useFindAndModify: false,
 });
-//load a passport
-require("./config/passport");
 
 //set a DB connection
 const db = mongoose.connection;
@@ -55,8 +53,12 @@ app.use(passport.session());
 
 //allow bodyParser to recognize a body
 app.use(bodyParser.urlencoded({ extended: false }));
+// // //express validator = after bodyParser!
+app.use(validator());
 app.use(bodyParser.json());
 
+//load a passport
+require("./config/passport");
 //load handlebars and set .handlebars to .hbs
 app.engine(
   ".hbs",

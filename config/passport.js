@@ -20,6 +20,17 @@ passport.use(
       passReqToCallback: true,
     },
     (req, name, password, done) => {
+      req.checkBody("name", "invalid name").notEmpty();
+      req
+        .checkBody("password", "minimum 4 characters required")
+        .notEmpty()
+        .isLength({ min: 4 });
+      const errors = req.validationErrors();
+      if (errors) {
+        const messages = [];
+        errors.forEach((error) => messages.push(error.msg));
+        return done(null, false, req.flash("error", messages));
+      }
       User.findOne({ name: name }, (err, user) => {
         if (err) {
           return done(err);
