@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const csrf = require("csurf");
+const passport = require("passport");
 
 //setting for csrf token
 const csrfProtection = csrf();
@@ -8,9 +9,12 @@ router.use(csrfProtection);
 
 router.get("/", (req, res) => {
   try {
+    const messages = req.flash("error");
     res.render("signup", {
       layout: "main",
       csrfToken: req.csrfToken(),
+      messages: messages,
+      hasErrors: messages.length > 0,
     });
   } catch (error) {
     return console.log(error);
@@ -28,12 +32,30 @@ router.get("/page", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+router.get("/profile", (req, res) => {
   try {
-    res.redirect("/page");
+    res.render("profile", {
+      layout: "main",
+    });
   } catch (error) {
     return console.log(error);
   }
 });
+
+router.post(
+  "/",
+  passport.authenticate("local.signup", {
+    successRedirect: "/profile",
+    failureRedirect: "/",
+    failureFlash: true,
+  }),
+  (req, res) => {
+    try {
+      res.redirect("/page");
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
 
 module.exports = router;

@@ -2,11 +2,18 @@
 <div class=" card col  m12 l6 xl4">
 
     <h1>Sign Up </h1>
-    
+    {{#if hasErrors}}
+     <div class="card-content red darken-1 white-text">
+         {{messages}}
+</div>
+{{/if}}
+
+
+
     <form action="/" method='post' autocomplete="off">
 <div class="form-group">
-<label for="email">E-Mail</label>
-<input type="text" id="email" name="email" >
+<label for="name">name</label>
+<input type="text" id="name" name="name" >
 </div>
 
 <div class="form-group">
@@ -16,6 +23,8 @@
 <input type="hidden" name="_csrf" value={{csrfToken}}>
 <p></p>
 <button type="submit" class="waves-effect waves-light btn ">Sign Up</button>
+<p></p>
+CSRF TOKEN: {{csrfToken}}
 <p></p>
     </form>
    

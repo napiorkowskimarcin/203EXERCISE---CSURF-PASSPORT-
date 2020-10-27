@@ -4,6 +4,11 @@ const exphbs = require("express-handlebars");
 const morgan = require("morgan");
 const config = require("./config/config");
 const bodyParser = require("body-parser");
+
+//passport:
+const passport = require("passport");
+const flash = require("connect-flash");
+
 //start a program
 const app = express();
 
@@ -28,6 +33,9 @@ mongoose.connect(config.db, {
   useUnifiedTopology: true,
   useFindAndModify: false,
 });
+//load a passport
+require("./config/passport");
+
 //set a DB connection
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -39,6 +47,11 @@ db.once("open", function () {
 app.use(
   session({ secret: "sessionsecret", resave: false, saveUninitialized: false })
 );
+//uses a session! after session initialized
+app.use(flash());
+//paspport - after flash!
+app.use(passport.initialize());
+app.use(passport.session());
 
 //allow bodyParser to recognize a body
 app.use(bodyParser.urlencoded({ extended: false }));
